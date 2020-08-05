@@ -54,18 +54,18 @@ void frame() {
     
 
 
-    if (pot1>0.8f) {
-        pPos1=0.8f;
-    } else if (pot1<0.05f) {
-        pPos1=0.05f;
+    if (pot1>0.8) {
+        pPos1=0.8;
+    } else if (pot1<0.05) {
+        pPos1=0.05;
     } else {
          pPos1=pot1;
     }
 
 
     // For pvp
-    if (pot2>0.8f) {
-        pPos2=0.8f;
+    if (pot2>0.8) {
+        pPos2=0.8;
     } else if (pot2<0.05f) {
         pPos2=0.05f;
     } else {
