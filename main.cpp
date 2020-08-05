@@ -2,6 +2,7 @@
 #include "stm32746g_discovery_lcd.h"
 
 AnalogIn pot1(A0);
+AnalogIn pot2(A1);
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
 int p2goingUp = false;
@@ -20,12 +21,14 @@ int p1H = 50;
 
 int p2X;
 int p2Y;
-int p2H = 150;
+int p2H = 50;
 
 int p1Score = 0;
 int p2Score = 0;
 
-
+void ballClear() {
+    BSP_LCD_FillRect(ballX-2, ballY-2, 14, 14);
+}
 
 void frame() {
 
@@ -60,6 +63,18 @@ void frame() {
     }
 
 
+    // For pvp
+    if (pot2>0.8f) {
+        pPos2=0.8f;
+    } else if (pot2<0.05f) {
+        pPos2=0.05f;
+    } else {
+         pPos2=pot2;
+    }
+
+
+    // For pve
+    /* 
     if (pPos2 <= 0.05f) {
         p2goingUp = false;
     } else if (pPos2 >= 0.8f) {
@@ -67,52 +82,52 @@ void frame() {
     }
 
     p2goingUp ? pPos2-=0.01f : pPos2+=0.01f; 
-
+    */
 
 
     p1Y = BSP_LCD_GetYSize()*pPos1;
     p2Y = BSP_LCD_GetYSize()*pPos2;
 
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-    
-    if (ballX >= BSP_LCD_GetXSize()-11) {
+
+    if (ballX >= BSP_LCD_GetXSize()-13) {
         ballXDir = -1;
         p1Score++;
         printf("p1 score increased\n");
-        BSP_LCD_FillRect(ballX-1, ballY-1, 12, 12);
+        ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
-    } else if (ballX <= 1) {
+    } else if (ballX <= 2) {
         ballXDir = 1;
         p2Score++;
         printf("p2 score increased\n");
-        BSP_LCD_FillRect(ballX-1, ballY-1, 12, 12);
+        ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
     } else if (ballX-10 == p1X) {
         if (ballY >= p1Y && ballY <= p1Y+p1H) {
             ballXDir = 1;
         }
-    } else if (ballX+5 == p2X) {
+    } else if (ballX == p2X-10) {
         if (ballY >= p2Y && ballY <= p2Y+p2H) {
             ballXDir = -1;
         }
     }
 
 
-    if (ballY >= BSP_LCD_GetYSize()-11) {
+    if (ballY >= BSP_LCD_GetYSize()-13) {
         ballYDir = -1;
-    } else if (ballY <= 1) {
+    } else if (ballY <= 2) {
         ballYDir = 1;
     }
 
-    ballX += ballXDir;
-    ballY += ballYDir;
+    ballX += ballXDir*2;
+    ballY += ballYDir*2;
 
     
     
     // Ball clear
-    BSP_LCD_FillRect(ballX-1, ballY-1, 12, 12);
+    ballClear();
 
     
 
@@ -128,6 +143,9 @@ void frame() {
     HAL_Delay(1000/fps);
     //printf("pot: %f", pot1);
 }
+
+
+
 
 int main()
 {
