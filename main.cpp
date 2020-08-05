@@ -3,6 +3,9 @@
 
 AnalogIn pot1(A0);
 AnalogIn pot2(A1);
+
+DigitalIn btn(USER_BUTTON);
+
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
 int p2goingUp = false;
@@ -10,9 +13,12 @@ int ballXDir = 1;
 int ballYDir = 1;
 int score1 = 0;
 int score2 = 0;
-int fps = 60;
+int fps = 60; // Default: 60
+int speed = 3;
 int ballX;
 int ballY;
+int ballXLast;
+int ballYLast;
 
 
 int p1X;
@@ -27,10 +33,15 @@ int p1Score = 0;
 int p2Score = 0;
 
 void ballClear() {
-    BSP_LCD_FillRect(ballX-2, ballY-2, 14, 14);
+    BSP_LCD_FillRect(ballXLast, ballYLast, 10, 10);
 }
 
 void frame() {
+
+    if (btn) {
+        p1Score = 0;
+        p2Score = 0;
+    }
 
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
     // Player 1 clear
@@ -104,11 +115,11 @@ void frame() {
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
-    } else if (ballX-10 == p1X) {
+    } else if (ballX >= p1X && ballX <= p1X+10) {
         if (ballY >= p1Y && ballY <= p1Y+p1H) {
             ballXDir = 1;
         }
-    } else if (ballX == p2X-10) {
+    } else if (ballX+10 >= p2X && ballX <= p2X) {
         if (ballY >= p2Y && ballY <= p2Y+p2H) {
             ballXDir = -1;
         }
@@ -121,8 +132,8 @@ void frame() {
         ballYDir = 1;
     }
 
-    ballX += ballXDir*2;
-    ballY += ballYDir*2;
+    ballX += ballXDir*speed;
+    ballY += ballYDir*speed;
 
     
     
@@ -139,9 +150,11 @@ void frame() {
     BSP_LCD_FillRect(p2X, p2Y, 10, p2H);
     // Ball draw
     BSP_LCD_FillRect(ballX, ballY, 10, 10);
+    
+    ballXLast = ballX;
+    ballYLast = ballY;
 
     HAL_Delay(1000/fps);
-    //printf("pot: %f", pot1);
 }
 
 
