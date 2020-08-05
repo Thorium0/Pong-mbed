@@ -14,7 +14,7 @@ int ballYDir = 1;
 int score1 = 0;
 int score2 = 0;
 int fps = 60; // Default: 60
-int speed = 3;
+int speed = 3; //Default: 1
 int ballX;
 int ballY;
 int ballXLast;
@@ -41,26 +41,30 @@ void frame() {
     if (btn) {
         p1Score = 0;
         p2Score = 0;
+        printf("Score reset\n");
     }
 
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
     // Player 1 clear
-    BSP_LCD_FillRect(p1X, 0, 10, BSP_LCD_GetYSize());
+    BSP_LCD_FillRect(p1X, 0, 10, p1Y-1);
+    BSP_LCD_FillRect(p1X, p1Y+p1H+1, 10, BSP_LCD_GetYSize()-p1Y+p1H);
+    
     // Player 2 clear
-    BSP_LCD_FillRect(p2X, 0, 10, BSP_LCD_GetYSize());
+    BSP_LCD_FillRect(p2X, 0, 10, p2Y-1);
+    BSP_LCD_FillRect(p2X, p2Y+p2H+1, 10, BSP_LCD_GetYSize()-p2Y+p2H);
 
 
     //char* p1ScoreArr[8];
-    //printf((char *)p1ScoreArr, "Score: %d", p1Score);
+    //printf((char *)p1ScoreArr, "Score: %i", p1Score);
 
     //char* p2ScoreArr[8];
-    //printf((char *)p2ScoreArr, "Score: %d", p2Score);
+    //printf((char *)p2ScoreArr, "Score: %i", p2Score);
 
 
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-    BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/10, (uint8_t *)"Ping Pong",CENTER_MODE);
-    //BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/10, (uint8_t *)p1ScoreArr,LEFT_MODE);
-    //BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/10, (uint8_t *)p2ScoreArr,RIGHT_MODE);
+    BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/10, (uint8_t *)"Ping Pong", CENTER_MODE);
+    //BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/10, (uint8_t *)p1ScoreArr, LEFT_MODE);
+    //BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/10, (uint8_t *)p2ScoreArr, RIGHT_MODE);
     
     
 
@@ -104,14 +108,14 @@ void frame() {
     if (ballX >= BSP_LCD_GetXSize()-13) {
         ballXDir = -1;
         p1Score++;
-        printf("p1 score increased\n");
+        printf("p1 score: %i\n", p1Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
     } else if (ballX <= 2) {
         ballXDir = 1;
         p2Score++;
-        printf("p2 score increased\n");
+        printf("p2 score: %i\n", p2Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
