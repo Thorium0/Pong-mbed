@@ -50,6 +50,7 @@ void frame() {
         p1Score = 0;
         p2Score = 0;
         fps = 60;
+        BSP_LCD_Clear(LCD_COLOR_BLACK);
         printf("Score reset\n");
     }
 
