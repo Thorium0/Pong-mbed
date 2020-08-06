@@ -6,7 +6,8 @@
 AnalogIn pot1(A0);
 AnalogIn pot2(A1);
 
-InterruptIn btn(D4);
+DigitalIn btn(USER_BUTTON);
+InterruptIn pBtn(D4);
 
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
@@ -23,7 +24,7 @@ int ballXLast;
 int ballYLast;
 
 int frameCount = 0;
-
+bool run = true;
 
 int p1X;
 int p1Y;
@@ -42,25 +43,32 @@ int minuteC;
 
 char timerStr[5];
 
+
+void toggleRun() {
+    run = !run;
+}
+
 void timer(){
     while (1) {
-        char str[5]; 
-        if (secondC < 10 && minuteC < 10)
-            sprintf(timerStr, "0%i:0%i", minuteC, secondC);
-        else if (secondC < 10 && minuteC >= 10)
-            sprintf(timerStr, "%i:0%i", minuteC, secondC);
-        else if (secondC >= 10 && minuteC < 10)
-            sprintf(timerStr, "0%i:%i", minuteC, secondC);
-        else
-            sprintf(timerStr, "%i:%i", minuteC, secondC);
+        if (run) {
+            char str[5]; 
+            if (secondC < 10 && minuteC < 10)
+                sprintf(timerStr, "0%i:0%i", minuteC, secondC);
+            else if (secondC < 10 && minuteC >= 10)
+                sprintf(timerStr, "%i:0%i", minuteC, secondC);
+            else if (secondC >= 10 && minuteC < 10)
+                sprintf(timerStr, "0%i:%i", minuteC, secondC);
+            else
+                sprintf(timerStr, "%i:%i", minuteC, secondC);
 
-        if (minuteC < 99)
-            secondC++;
-        if (secondC >= 60 ) {
-            secondC = 0;
-            minuteC++;
+            if (minuteC < 99)
+                secondC++;
+            if (secondC >= 60 ) {
+                secondC = 0;
+                minuteC++;
+            }
+            ThisThread::sleep_for(1s);
         }
-        ThisThread::sleep_for(1s);
     }
 }
 
@@ -236,9 +244,11 @@ int main()
     p2X = BSP_LCD_GetXSize()/10*9;
 
     t.start(&timer);
+    pBtn.rise(&toggleRun);
     
     while (true) {
-        frame();
+        if (run)
+            frame();
     }
 }
 
