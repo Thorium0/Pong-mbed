@@ -34,18 +34,10 @@ int p2H = 50;
 int p1Score = 0;
 int p2Score = 0;
 
-/*void printChars(vector<char> str, int startX, int y) {
-    int endX = startX+str.size()*10;
-    int count = 0;
-    for (int i=str.size(); i < endX; i++) {
-        BSP_LCD_DisplayChar(count, y, int(str[i]));
-        count+=10;
-    }
-}*/
 
 void increaseSpeed() {
     if (fps < 240)
-        fps += 5;    
+        fps += 10;    
 }
 
 void ballClear() {
