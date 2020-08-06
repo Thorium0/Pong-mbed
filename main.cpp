@@ -6,7 +6,7 @@
 AnalogIn pot1(A0);
 AnalogIn pot2(A1);
 
-DigitalIn btn(D4);
+InterruptIn btn(D4);
 
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
@@ -36,6 +36,33 @@ int p2H = 50;
 int p1Score = 0;
 int p2Score = 0;
 
+Thread t;
+int secondC;
+int minuteC;
+
+char timerStr[5];
+
+void timer(){
+    while (1) {
+    char str[5]; 
+    if (secondC < 10 && minuteC < 10)
+        sprintf(timerStr, "0%i:0%i", minuteC, secondC);
+    else if (secondC < 10 && minuteC >= 10)
+        sprintf(timerStr, "%i:0%i", minuteC, secondC);
+    else if (secondC >= 10 && minuteC < 10)
+        sprintf(timerStr, "0%i:%i", minuteC, secondC);
+    else
+        sprintf(timerStr, "%i:%i", minuteC, secondC);
+    
+    if (minuteC < 99)
+        secondC++;
+    if (secondC >= 60 ) {
+        secondC = 0;
+        minuteC++;
+    }
+    ThisThread::sleep_for(1s);
+    }
+}
 
 void increaseSpeed(int amount) {
     if (fps < 480)
@@ -78,15 +105,11 @@ void frame() {
     
 
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-    BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)"Ping Pong", CENTER_MODE);
     
-    char str[20];
-
-    sprintf(str, "%i", p1Score);
-    BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)str, LEFT_MODE);
-    
-    sprintf(str, "%i", p2Score);
-    BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)str, RIGHT_MODE);
+    BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()-20, (uint8_t *)timerStr, CENTER_MODE);
+    char str[10];    
+    sprintf(str, "%i:%i", p1Score, p2Score);
+    BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)str, CENTER_MODE);
     
     
 
@@ -203,6 +226,8 @@ int main()
 
     p1X = BSP_LCD_GetXSize()/10;
     p2X = BSP_LCD_GetXSize()/10*9;
+
+    t.start(&timer);
     
     while (true) {
         frame();
