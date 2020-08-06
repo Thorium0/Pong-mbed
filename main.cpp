@@ -16,7 +16,7 @@ int ballYDir = 1;
 int score1 = 0;
 int score2 = 0;
 int fps = 60; // Default: 60
-int speed= 1; //Default: 1
+int speed = 2; //Default: 2
 int ballX;
 int ballY;
 int ballXLast;
@@ -36,7 +36,7 @@ int p2Score = 0;
 
 
 void increaseSpeed() {
-    if (fps < 240)
+    if (fps < 360)
         fps += 10;    
 }
 
