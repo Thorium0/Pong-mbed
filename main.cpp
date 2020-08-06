@@ -6,7 +6,7 @@
 AnalogIn pot1(A0);
 AnalogIn pot2(A1);
 
-DigitalIn btn(USER_BUTTON);
+DigitalIn btn(D4);
 
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
@@ -15,12 +15,14 @@ int ballXDir = 1;
 int ballYDir = 1;
 int score1 = 0;
 int score2 = 0;
-int fps = 60; // Default: 60
-int speed = 2; //Default: 2
+int fps = 120; // Default: 60
+int speed = 1; //Default: 1
 int ballX;
 int ballY;
 int ballXLast;
 int ballYLast;
+
+int frameCount = 0;
 
 
 int p1X;
@@ -35,9 +37,9 @@ int p1Score = 0;
 int p2Score = 0;
 
 
-void increaseSpeed() {
-    if (fps < 360)
-        fps += 10;    
+void increaseSpeed(int amount) {
+    if (fps < 480)
+        fps += amount;    
 }
 
 void ballClear() {
@@ -45,6 +47,7 @@ void ballClear() {
 }
 
 void frame() {
+    frameCount++;
 
     if (btn) {
         p1Score = 0;
@@ -54,6 +57,13 @@ void frame() {
         printf("Score reset\n");
     }
 
+
+    if (frameCount >= 500){
+        increaseSpeed(20);
+        printf("Speed increased!\n");
+        frameCount = 0;
+    }
+    
     
 
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
@@ -120,7 +130,7 @@ void frame() {
     if (ballX >= BSP_LCD_GetXSize()-13) {
         ballXDir = -1;
         p1Score++;
-        increaseSpeed();
+        fps = 60;
         printf("p1 score: %i\n", p1Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
@@ -128,7 +138,7 @@ void frame() {
     } else if (ballX <= 2) {
         ballXDir = 1;
         p2Score++;
-        increaseSpeed();
+        fps = 60;
         printf("p2 score: %i\n", p2Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
@@ -146,7 +156,7 @@ void frame() {
 
     if (ballY >= BSP_LCD_GetYSize()-13) {
         ballYDir = -1;
-    } else if (ballY <= 2) {
+    } else if (ballY <= 5) {
         ballYDir = 1;
     }
 
