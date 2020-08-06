@@ -44,24 +44,30 @@ char timerStr[5];
 
 void timer(){
     while (1) {
-    char str[5]; 
-    if (secondC < 10 && minuteC < 10)
-        sprintf(timerStr, "0%i:0%i", minuteC, secondC);
-    else if (secondC < 10 && minuteC >= 10)
-        sprintf(timerStr, "%i:0%i", minuteC, secondC);
-    else if (secondC >= 10 && minuteC < 10)
-        sprintf(timerStr, "0%i:%i", minuteC, secondC);
-    else
-        sprintf(timerStr, "%i:%i", minuteC, secondC);
-    
-    if (minuteC < 99)
-        secondC++;
-    if (secondC >= 60 ) {
-        secondC = 0;
-        minuteC++;
+        char str[5]; 
+        if (secondC < 10 && minuteC < 10)
+            sprintf(timerStr, "0%i:0%i", minuteC, secondC);
+        else if (secondC < 10 && minuteC >= 10)
+            sprintf(timerStr, "%i:0%i", minuteC, secondC);
+        else if (secondC >= 10 && minuteC < 10)
+            sprintf(timerStr, "0%i:%i", minuteC, secondC);
+        else
+            sprintf(timerStr, "%i:%i", minuteC, secondC);
+
+        if (minuteC < 99)
+            secondC++;
+        if (secondC >= 60 ) {
+            secondC = 0;
+            minuteC++;
+        }
+        ThisThread::sleep_for(1s);
     }
-    ThisThread::sleep_for(1s);
-    }
+}
+
+void resetTimer() {
+    secondC = 0;
+    minuteC = 0;
+    sprintf(timerStr, "00:00");
 }
 
 void increaseSpeed(int amount) {
@@ -154,6 +160,7 @@ void frame() {
         ballXDir = -1;
         p1Score++;
         fps = 60;
+        resetTimer();
         printf("p1 score: %i\n", p1Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
@@ -162,6 +169,7 @@ void frame() {
         ballXDir = 1;
         p2Score++;
         fps = 60;
+        resetTimer();
         printf("p2 score: %i\n", p2Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
