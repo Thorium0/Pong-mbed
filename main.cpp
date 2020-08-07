@@ -1,13 +1,15 @@
 #include "mbed.h"
 #include "stm32746g_discovery_lcd.h"
+#include "stm32746g_discovery_ts.h"
+#include "rect.h" 
 #include <vector>
 
 
 AnalogIn pot1(A0);
 AnalogIn pot2(A1);
 
-DigitalIn btn(USER_BUTTON);
-InterruptIn pBtn(D4);
+DigitalIn btn(D4);
+InterruptIn pBtn(USER_BUTTON);
 
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
@@ -16,7 +18,8 @@ int ballXDir = 1;
 int ballYDir = 1;
 int score1 = 0;
 int score2 = 0;
-int fps = 120; // Default: 60
+int startFPS = 120; // Default: 120
+int fps; 
 int speed = 1; //Default: 1
 int ballX;
 int ballY;
@@ -25,6 +28,7 @@ int ballYLast;
 
 int frameCount = 0;
 bool run = true;
+bool showMenu = true;
 
 int p1X;
 int p1Y;
@@ -60,7 +64,7 @@ void timer(){
                 sprintf(timerStr, "0%i:%i", minuteC, secondC);
             else
                 sprintf(timerStr, "%i:%i", minuteC, secondC);
-
+    
             if (minuteC < 99)
                 secondC++;
             if (secondC >= 60 ) {
@@ -93,7 +97,7 @@ void frame() {
     if (btn) {
         p1Score = 0;
         p2Score = 0;
-        fps = 60;
+        fps = startFPS;
         BSP_LCD_Clear(LCD_COLOR_BLACK);
         printf("Score reset\n");
     }
@@ -167,7 +171,7 @@ void frame() {
     if (ballX >= BSP_LCD_GetXSize()-13) {
         ballXDir = -1;
         p1Score++;
-        fps = 60;
+        fps = startFPS;
         resetTimer();
         printf("p1 score: %i\n", p1Score);
         ballClear();
@@ -176,7 +180,7 @@ void frame() {
     } else if (ballX <= 2) {
         ballXDir = 1;
         p2Score++;
-        fps = 60;
+        fps = startFPS;
         resetTimer();
         printf("p2 score: %i\n", p2Score);
         ballClear();
@@ -225,7 +229,70 @@ void frame() {
 }
 
 
+void menu() {
+    rect button1 = rect(50,50,100,50,(uint8_t *)"Start");
+    rect button2 = rect(50,100,100,50,(uint8_t *)"Speed");
+    rect button3 = rect(50,150,100,50,(uint8_t *)"FPS");
+    
+    BSP_LCD_SetBackColor(LCD_COLOR_BLACK);
+    BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+    
 
+bool status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+  if (status) {
+    printf("Load Successfull!");
+  } else {
+    printf("Load Failed...");
+  }
+
+  TS_StateTypeDef TS_State;
+  int x = 0;
+  int y = 0;
+bool sleepAtEnd = false;
+char txt[10];
+  while (showMenu) {
+
+    
+    BSP_TS_GetState(&TS_State);
+    if (TS_State.touchDetected) {
+      for (int idx = 0; idx < TS_State.touchDetected;
+           idx++) { 
+        x = TS_State.touchX[idx];
+        y = TS_State.touchY[idx];
+        // printf("Touch %d: x=%d y=%d\n", idx+1, x, y);
+
+        if (button1.isTouched(x, y)) {
+            showMenu = false;
+        }
+
+        if (button2.isTouched(x, y)) {
+            speed++;
+            sleepAtEnd = true;
+        }
+
+        if (button3.isTouched(x, y)) {
+            startFPS+=10;
+            sleepAtEnd = true;
+        }
+        
+        }
+    }
+
+    sprintf(txt,"Current: %i", speed);
+    BSP_LCD_DisplayStringAt(160, 110, (uint8_t *)txt, LEFT_MODE);
+    
+
+    sprintf(txt,"Current: %i", startFPS);
+    BSP_LCD_DisplayStringAt(160, 160, (uint8_t *)txt, LEFT_MODE);
+
+    if (sleepAtEnd) {
+        ThisThread::sleep_for(200ms);
+        sleepAtEnd = false;
+    }
+        
+    
+  }
+}
 
 int main()
 {
@@ -243,12 +310,17 @@ int main()
     p1X = BSP_LCD_GetXSize()/10;
     p2X = BSP_LCD_GetXSize()/10*9;
 
+    menu();
+    BSP_LCD_Clear(LCD_COLOR_BLACK);
+
     t.start(&timer);
     pBtn.rise(&toggleRun);
-    
+
+    fps = startFPS;
+
     while (true) {
         if (run)
             frame();
     }
-}
 
+}
