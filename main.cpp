@@ -18,9 +18,12 @@ int ballXDir = 1;
 int ballYDir = 1;
 int score1 = 0;
 int score2 = 0;
-int startFPS = 120; // Default: 120
+int startFPS = 60; // Default: 60
 int fps; 
+int fpsMax = 2000;
+int fpsIncrease = 20;
 int speed = 1; //Default: 1
+int speedMax = 9;
 int ballX;
 int ballY;
 int ballXLast;
@@ -83,7 +86,7 @@ void resetTimer() {
 }
 
 void increaseSpeed(int amount) {
-    if (fps < 480)
+    if (fps < fpsMax)
         fps += amount;    
 }
 
@@ -177,7 +180,7 @@ void frame() {
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
-    } else if (ballX <= 2) {
+    } else if (ballX <= 13) {
         ballXDir = 1;
         p2Score++;
         fps = startFPS;
@@ -230,6 +233,7 @@ void frame() {
 
 
 void menu() {
+    
     rect button1 = rect(50,50,100,50,(uint8_t *)"Start");
     rect button2 = rect(50,100,100,50,(uint8_t *)"Speed");
     rect button3 = rect(50,150,100,50,(uint8_t *)"FPS");
@@ -237,8 +241,9 @@ void menu() {
     BSP_LCD_SetBackColor(LCD_COLOR_BLACK);
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
     
+    BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Ping Pong", CENTER_MODE);
 
-bool status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+  bool status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
   if (status) {
     printf("Load Successfull!");
   } else {
@@ -265,13 +270,13 @@ char txt[10];
             showMenu = false;
         }
 
-        if (button2.isTouched(x, y)) {
+        if (button2.isTouched(x, y) && speed < speedMax) {
             speed++;
             sleepAtEnd = true;
         }
 
-        if (button3.isTouched(x, y)) {
-            startFPS+=10;
+        if (button3.isTouched(x, y) && startFPS < fpsMax) {
+            startFPS+=fpsIncrease;
             sleepAtEnd = true;
         }
         
@@ -286,7 +291,7 @@ char txt[10];
     BSP_LCD_DisplayStringAt(160, 160, (uint8_t *)txt, LEFT_MODE);
 
     if (sleepAtEnd) {
-        ThisThread::sleep_for(200ms);
+        ThisThread::sleep_for(100ms);
         sleepAtEnd = false;
     }
         
