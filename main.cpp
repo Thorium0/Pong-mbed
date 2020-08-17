@@ -5,15 +5,15 @@
 #include <vector>
 
 
-AnalogIn pot1(A0);
-AnalogIn pot2(A1);
-
-DigitalIn btn(D4);
-InterruptIn pBtn(USER_BUTTON);
+AnalogIn pot1(A0); // Player 1 input
+AnalogIn pot2(A1); // Player 2 input
+DigitalIn btn(D4); // Reset button
+InterruptIn pBtn(USER_BUTTON); // Pause button
+PwmOut buzzer(D8);
 
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
-int p2goingUp = false;
+//int p2goingUp = false;
 int ballXDir = 1;
 int ballYDir = 1;
 int score1 = 0;
@@ -32,6 +32,7 @@ int ballYLast;
 int frameCount = 0;
 bool run = true;
 bool showMenu = true;
+bool soundToggle = false;
 
 int p1X;
 int p1Y;
@@ -51,11 +52,21 @@ int minuteC;
 char timerStr[5];
 
 
-void toggleRun() {
+void playSound(float wave) {
+    if (soundToggle) {
+        buzzer = wave;
+        ThisThread::sleep_for(20ms);
+        buzzer = 0;
+    }
+}
+
+// Event for toggling pause
+void toggleRun() { 
     run = !run;
 }
 
-void timer(){
+// The visual timer
+void timer(){ 
     while (1) {
         if (run) {
             char str[5]; 
@@ -79,21 +90,25 @@ void timer(){
     }
 }
 
+// Resets the timer
 void resetTimer() {
     secondC = 0;
     minuteC = 0;
     sprintf(timerStr, "00:00");
 }
 
+// Increment speed
 void increaseSpeed(int amount) {
     if (fps < fpsMax)
         fps += amount;    
 }
 
+// Clear ball visual
 void ballClear() {
     BSP_LCD_FillRect(ballXLast, ballYLast, 10, 10);
 }
 
+// Each frame
 void frame() {
     frameCount++;
 
@@ -180,6 +195,7 @@ void frame() {
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
+        playSound(1.0);
     } else if (ballX <= 13) {
         ballXDir = 1;
         p2Score++;
@@ -189,21 +205,26 @@ void frame() {
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
+        playSound(1.0);
     } else if (ballX >= p1X && ballX <= p1X+10) {
         if (ballY >= p1Y && ballY <= p1Y+p1H) {
             ballXDir = 1;
+            playSound(0.1);
         }
     } else if (ballX+10 >= p2X && ballX <= p2X) {
         if (ballY >= p2Y && ballY <= p2Y+p2H) {
             ballXDir = -1;
+            playSound(0.1);
         }
     }
 
 
     if (ballY >= BSP_LCD_GetYSize()-13) {
         ballYDir = -1;
+        playSound(0.2);
     } else if (ballY <= 5) {
         ballYDir = 1;
+        playSound(0.2);
     }
 
     ballX += ballXDir*speed;
@@ -231,12 +252,13 @@ void frame() {
     HAL_Delay(1000/fps);
 }
 
-
+// Visual menu
 void menu() {
     
     rect button1 = rect(50,50,100,50,(uint8_t *)"Start");
     rect button2 = rect(50,100,100,50,(uint8_t *)"Speed");
     rect button3 = rect(50,150,100,50,(uint8_t *)"FPS");
+    rect button4 = rect(50,200,100,50,(uint8_t *)"Sound");
     
     BSP_LCD_SetBackColor(LCD_COLOR_BLACK);
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
@@ -253,8 +275,8 @@ void menu() {
   TS_StateTypeDef TS_State;
   int x = 0;
   int y = 0;
-bool sleepAtEnd = false;
-char txt[10];
+  bool sleepAtEnd = false;
+  char txt[10];
   while (showMenu) {
 
     
@@ -279,6 +301,11 @@ char txt[10];
             startFPS+=fpsIncrease;
             sleepAtEnd = true;
         }
+
+        if (button4.isTouched(x, y)) {
+            soundToggle ? soundToggle = false : soundToggle = true;
+            sleepAtEnd = true;
+        }
         
         }
     }
@@ -290,6 +317,9 @@ char txt[10];
     sprintf(txt,"Current: %i", startFPS);
     BSP_LCD_DisplayStringAt(160, 160, (uint8_t *)txt, LEFT_MODE);
 
+    soundToggle ? sprintf(txt,"Current: On ") : sprintf(txt,"Current: Off");
+    BSP_LCD_DisplayStringAt(160, 210, (uint8_t *)txt, LEFT_MODE);
+
     if (sleepAtEnd) {
         ThisThread::sleep_for(100ms);
         sleepAtEnd = false;
@@ -299,6 +329,7 @@ char txt[10];
   }
 }
 
+// Start of program
 int main()
 {
     BSP_LCD_Init();
