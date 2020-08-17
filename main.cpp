@@ -241,7 +241,7 @@ void menu() {
     BSP_LCD_SetBackColor(LCD_COLOR_BLACK);
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
     
-    BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Ping Pong", CENTER_MODE);
+    BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Pong", CENTER_MODE);
 
   bool status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
   if (status) {
