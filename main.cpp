@@ -230,12 +230,9 @@ void frame() {
     ballX += ballXDir*speed;
     ballY += ballYDir*speed;
 
-    
-    
+        
     // Ball clear
     ballClear();
-
-    
 
 
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);

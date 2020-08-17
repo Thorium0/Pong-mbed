@@ -14,7 +14,7 @@ Problems/Changes:<br/>
 
 Libraries used:<br/>
 <a href="https://github.com/ARMmbed/mbed-os.git">mbed.h - mbed 0S 6.2.0 library</a><br/>
-key.h - custom class file<br/>
+rect.h - header for custom class<br/>
 <a href="https://os.mbed.com/teams/ST/code/BSP_DISCO_F746NG/">stm32746g_discovery_lcd.h - library for the visual part of the display</a><br/> 
 stm32746g_discovery_ts.h - library for the touch part of the display<br/>
 vector - library for using vectors
