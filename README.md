@@ -4,12 +4,24 @@ Introduction:<br/>
 I made Pong for the STM32F7-DISCO EC
 
 Features:<br/>
+Pong is a 2 player PvP game, in which you each have a bar, which you can use to keep a ball from going behind you.<br/>
+If the ball does get behind you the opposing player gets a point. When you decide to stop playing, the player with the most points win.<br/>
+When you start the game you also have the choice to increase the speed and FPS. The FPS changes how fast the ball moves and the speed changes how many pixels the ball moves each frame.<br/>
+The speed will also exponentially increase automatically if no player has scored for some time.<br/>
+There is also an option to turn on or off sound.<br/>
+Each player is controlled with a potentiometer for full analog controls.<br/>
+There is also 3 usable buttons, 2 of which is integrated on the board.<br/>
+The black button takes you back to the menu.<br/>
+The blue button pauses/unpauses the game. And the third button connected with a cable resets the score and ball position, it also clears any artifacts if the game has glithed. (Has not happened to me)<br/> 
 
 
 How I made it:<br/>
+I made it by drawing a picture on the screen many times a second, which makes it look like the objects move.
+
 
 
 Problems/Changes:<br/>
+Originally I cleared the entire screen each frame, but the screen could not update that fast, so instead I just cleared the pixels that need be cleared.
 
 
 Libraries used:<br/>
