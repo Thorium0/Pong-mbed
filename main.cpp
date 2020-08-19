@@ -299,7 +299,12 @@ void menu() {
         }
 
         if (button4.isTouched(x, y)) {
-            soundToggle ? soundToggle = false : soundToggle = true;
+            if (soundToggle) {
+                soundToggle = false;
+            } else {
+                soundToggle = true;
+                playSound(1.0); 
+            }
             sleepAtEnd = true;
         }
         
