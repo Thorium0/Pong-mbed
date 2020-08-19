@@ -1,5 +1,6 @@
 # Pong-mbed
 Last updated: 17/08-2020<br/>
+
 <b>Introduction:</b><br/>
 I made Pong for the STM32F7-DISCO EC
 
@@ -40,4 +41,4 @@ Potentiometer 2: A1<br/>
 Buzzer: D8<br/>
 
 <br/>
-Made by Troels Wittrup-Jensen
+<b>Made by Troels Wittrup-Jensen</b>
