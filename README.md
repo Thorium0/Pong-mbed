@@ -1,5 +1,5 @@
 # Pong-mbed
-Last updated: 17/08-2020<br/><br/>
+Last updated: 19/08-2020<br/><br/>
 
 <b>Introduction:</b><br/>
 I made Pong for the STM32F7-DISCO EC
