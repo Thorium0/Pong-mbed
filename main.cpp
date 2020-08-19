@@ -13,7 +13,6 @@ PwmOut buzzer(D8);
 
 float pPos1 = 0.0f;
 float pPos2 = 0.0f;
-//int p2goingUp = false;
 int ballXDir = 1;
 int ballYDir = 1;
 int score1 = 0;
@@ -116,6 +115,11 @@ void frame() {
         p1Score = 0;
         p2Score = 0;
         fps = startFPS;
+        ballX = BSP_LCD_GetXSize()/2;
+        ballY = BSP_LCD_GetYSize()/2;
+        ballXDir = 1;
+        ballYDir = 1;
+        resetTimer();
         BSP_LCD_Clear(LCD_COLOR_BLACK);
         printf("Score reset\n");
     }
@@ -149,7 +153,7 @@ void frame() {
     
     
 
-
+    // Player 1 move
     if (pot1>0.8) {
         pPos1=0.8;
     } else if (pot1<0.05) {
@@ -159,7 +163,7 @@ void frame() {
     }
 
 
-    // For pvp
+    // Player 2 move
     if (pot2>0.8) {
         pPos2=0.8;
     } else if (pot2<0.05f) {
@@ -169,52 +173,43 @@ void frame() {
     }
 
 
-    // For pve
-    /* 
-    if (pPos2 <= 0.05f) {
-        p2goingUp = false;
-    } else if (pPos2 >= 0.8f) {
-        p2goingUp = true;
-    }
-
-    p2goingUp ? pPos2-=0.01f : pPos2+=0.01f; 
-    */
-
-
     p1Y = BSP_LCD_GetYSize()*pPos1;
     p2Y = BSP_LCD_GetYSize()*pPos2;
 
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 
+    // Ball hitbox
     if (ballX >= BSP_LCD_GetXSize()-13) {
         ballXDir = -1;
         p1Score++;
         fps = startFPS;
-        resetTimer();
         printf("p1 score: %i\n", p1Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
         playSound(1.0);
+        ThisThread::sleep_for(100ms);
+        playSound(1.0);
     } else if (ballX <= 13) {
         ballXDir = 1;
         p2Score++;
         fps = startFPS;
-        resetTimer();
         printf("p2 score: %i\n", p2Score);
         ballClear();
         ballY = BSP_LCD_GetYSize()/2;
         ballX = BSP_LCD_GetXSize()/2;
         playSound(1.0);
+        ThisThread::sleep_for(100ms);
+        playSound(1.0);
     } else if (ballX >= p1X && ballX <= p1X+10) {
         if (ballY >= p1Y && ballY <= p1Y+p1H) {
             ballXDir = 1;
-            playSound(0.1);
+            playSound(1.0);
         }
     } else if (ballX+10 >= p2X && ballX <= p2X) {
         if (ballY >= p2Y && ballY <= p2Y+p2H) {
             ballXDir = -1;
-            playSound(0.1);
+            playSound(1.0);
         }
     }
 
@@ -227,6 +222,8 @@ void frame() {
         playSound(0.2);
     }
 
+
+    // Translate ball across screen
     ballX += ballXDir*speed;
     ballY += ballYDir*speed;
 
@@ -243,6 +240,7 @@ void frame() {
     // Ball draw
     BSP_LCD_FillRect(ballX, ballY, 10, 10);
     
+    // Save position of ball to clear it next frame.
     ballXLast = ballX;
     ballYLast = ballY;
 
@@ -264,9 +262,10 @@ void menu() {
 
   bool status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
   if (status) {
-    printf("Load Successfull!");
+    printf("[Touch input] Load Successfull!\n");
   } else {
-    printf("Load Failed...");
+    printf("[Touch input] Load Failed...\n");
+    printf("[Touch input] If the touch input works, you can ignore this.\n");
   }
 
   TS_StateTypeDef TS_State;
@@ -318,7 +317,7 @@ void menu() {
     BSP_LCD_DisplayStringAt(160, 210, (uint8_t *)txt, LEFT_MODE);
 
     if (sleepAtEnd) {
-        ThisThread::sleep_for(100ms);
+        ThisThread::sleep_for(250ms);
         sleepAtEnd = false;
     }
         
