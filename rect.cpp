@@ -1,7 +1,7 @@
 #include "mbed.h"
 #include "rect.h"
 #include "stm32746g_discovery_lcd.h"
-#include <string>
+
 
 // Constructor
 rect::rect (int _x, int _y, int _width, int _height, uint8_t* _txt) {

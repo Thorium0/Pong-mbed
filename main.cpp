@@ -2,7 +2,6 @@
 #include "stm32746g_discovery_lcd.h"
 #include "stm32746g_discovery_ts.h"
 #include "rect.h" 
-#include <vector>
 
 
 AnalogIn pot1(A0); // Player 1 input

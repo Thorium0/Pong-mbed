@@ -1,5 +1,5 @@
 # Pong-mbed
-Last updated: 19/08-2020<br/><br/>
+Last updated: 20/08-2020<br/><br/>
 
 <b>Introduction:</b><br/>
 I made Pong for the STM32F7-DISCO EC
@@ -30,7 +30,6 @@ Originally I cleared the entire screen each frame, but the screen could not upda
 rect.h - header for custom class<br/>
 <a href="https://os.mbed.com/teams/ST/code/BSP_DISCO_F746NG/">stm32746g_discovery_lcd.h</a> - library for the visual part of the display<br/> 
 <a href="https://os.mbed.com/teams/ST/code/BSP_DISCO_F746NG/">stm32746g_discovery_ts.h</a> - library for the touch part of the display<br/>
-vector - library for using vectors
 
 
 <b>Pin Connections:</b><br/>
