@@ -261,8 +261,8 @@ void menu() {
     
     BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Pong", CENTER_MODE);
 
-  bool status = BSP_TS_Init(xSize, ySize);
-  if (status) {
+  uint8_t status = BSP_TS_Init(xSize, ySize);
+  if (status == TS_OK) {
     printf("[Touch input] Load Successfull!\n");
   } else {
     printf("[Touch input] Load Failed...\n");
