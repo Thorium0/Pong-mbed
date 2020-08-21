@@ -13,16 +13,16 @@ There is also an option to turn on or off sound.<br/>
 Each player is controlled with a potentiometer for full analog controls.<br/>
 There is also 3 usable buttons, 2 of which is integrated on the board.<br/>
 The black button takes you back to the menu.<br/>
-The blue button pauses/unpauses the game. And the third button connected with a cable resets the score and ball position, it also clears any artifacts if the game has glithed. (Has not happened to me)<br/> 
+The blue button pauses/unpauses the game. And the third button connected with a cable resets the score and ball position, it also clears any artifacts if the game has glithed. (Has not happened to me)<br/>
 
 
 <b>How I made it:</b><br/>
-I made it by drawing a picture on the screen many times a second, which makes it look like the objects move.
-
+I made it by drawing a picture on the screen many times a second, which makes it look like the objects move.<br/>
+The players move to the absoloute position of each potentiometer respectively, meaning that the player will always move to the same position when the potentiometer is turned to the same position.<br/>
 
 
 <b>Problems/Changes:</b><br/>
-Originally I cleared the entire screen each frame, but the screen could not update that fast, so instead I just cleared the pixels that need be cleared.
+Originally I cleared the entire screen each frame, but the display could not update that fast, so instead I just cleared the pixels that need be cleared.<br/>
 
 
 <b>Libraries used:</b><br/>
