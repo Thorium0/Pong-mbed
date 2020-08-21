@@ -26,6 +26,8 @@ int ballX;
 int ballY;
 int ballXLast;
 int ballYLast;
+int ySize;
+int xSize;
 
 int frameCount = 0;
 bool run = true;
@@ -114,8 +116,8 @@ void frame() {
         p1Score = 0;
         p2Score = 0;
         fps = startFPS;
-        ballX = BSP_LCD_GetXSize()/2;
-        ballY = BSP_LCD_GetYSize()/2;
+        ballX = xSize/2;
+        ballY = ySize/2;
         ballXDir = 1;
         ballYDir = 1;
         resetTimer();
@@ -135,17 +137,17 @@ void frame() {
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
     // Player 1 clear
     BSP_LCD_FillRect(p1X, 0, 10, p1Y-1);
-    BSP_LCD_FillRect(p1X, p1Y+p1H+1, 10, BSP_LCD_GetYSize()-p1Y+p1H);
+    BSP_LCD_FillRect(p1X, p1Y+p1H+1, 10, ySize-p1Y+p1H);
     
     // Player 2 clear
     BSP_LCD_FillRect(p2X, 0, 10, p2Y-1);
-    BSP_LCD_FillRect(p2X, p2Y+p2H+1, 10, BSP_LCD_GetYSize()-p2Y+p2H);
+    BSP_LCD_FillRect(p2X, p2Y+p2H+1, 10, ySize-p2Y+p2H);
 
     
 
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
     
-    BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()-20, (uint8_t *)timerStr, CENTER_MODE);
+    BSP_LCD_DisplayStringAt(0, ySize-20, (uint8_t *)timerStr, CENTER_MODE);
     char str[10];    
     sprintf(str, "%i:%i", p1Score, p2Score);
     BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)str, CENTER_MODE);
@@ -172,20 +174,20 @@ void frame() {
     }
 
 
-    p1Y = BSP_LCD_GetYSize()*pPos1;
-    p2Y = BSP_LCD_GetYSize()*pPos2;
+    p1Y = ySize*pPos1;
+    p2Y = ySize*pPos2;
 
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 
     // Ball hitbox
-    if (ballX >= BSP_LCD_GetXSize()-13) {
+    if (ballX >= xSize-13) {
         ballXDir = -1;
         p1Score++;
         fps = startFPS;
         printf("p1 score: %i\n", p1Score);
         ballClear();
-        ballY = BSP_LCD_GetYSize()/2;
-        ballX = BSP_LCD_GetXSize()/2;
+        ballY = ySize/2;
+        ballX = xSize/2;
         playSound(1.0);
         ThisThread::sleep_for(100ms);
         playSound(1.0);
@@ -195,8 +197,8 @@ void frame() {
         fps = startFPS;
         printf("p2 score: %i\n", p2Score);
         ballClear();
-        ballY = BSP_LCD_GetYSize()/2;
-        ballX = BSP_LCD_GetXSize()/2;
+        ballY = ySize/2;
+        ballX = xSize/2;
         playSound(1.0);
         ThisThread::sleep_for(100ms);
         playSound(1.0);
@@ -213,7 +215,7 @@ void frame() {
     }
 
 
-    if (ballY >= BSP_LCD_GetYSize()-13) {
+    if (ballY >= ySize-13) {
         ballYDir = -1;
         playSound(0.2);
     } else if (ballY <= 5) {
@@ -259,7 +261,7 @@ void menu() {
     
     BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Pong", CENTER_MODE);
 
-  bool status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+  bool status = BSP_TS_Init(xSize, ySize);
   if (status) {
     printf("[Touch input] Load Successfull!\n");
   } else {
@@ -340,11 +342,14 @@ int main()
     BSP_LCD_Clear(LCD_COLOR_BLACK);
     
 
-    ballX = BSP_LCD_GetXSize()/2;
-    ballY = BSP_LCD_GetYSize()/2;
+    xSize = BSP_LCD_GetXSize();
+    ySize = BSP_LCD_GetYSize();
 
-    p1X = BSP_LCD_GetXSize()/10;
-    p2X = BSP_LCD_GetXSize()/10*9;
+    ballX = xSize/2;
+    ballY = ySize/2;
+
+    p1X = xSize/10;
+    p2X = xSize/10*9;
 
     menu();
     BSP_LCD_Clear(LCD_COLOR_BLACK);
