@@ -203,12 +203,12 @@ void frame() {
         ThisThread::sleep_for(100ms);
         playSound(1.0);
     } else if (ballX >= p1X && ballX <= p1X+10) {
-        if (ballY >= p1Y && ballY <= p1Y+p1H) {
+        if (ballY >= p1Y && ballY <= p1Y+p1H+10) {
             ballXDir = 1;
             playSound(1.0);
         }
     } else if (ballX+10 >= p2X && ballX <= p2X) {
-        if (ballY >= p2Y && ballY <= p2Y+p2H) {
+        if (ballY+10 >= p2Y && ballY <= p2Y+p2H) {
             ballXDir = -1;
             playSound(1.0);
         }
