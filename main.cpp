@@ -26,6 +26,8 @@ int ballX;
 int ballY;
 int ballXLast;
 int ballYLast;
+int ballHeight = 10;
+int ballWidth = 10;
 int ySize;
 int xSize;
 
@@ -105,7 +107,12 @@ void increaseSpeed(int amount) {
 
 // Clear ball visual
 void ballClear() {
-    BSP_LCD_FillRect(ballXLast, ballYLast, 10, 10);
+    BSP_LCD_FillRect(ballXLast, ballYLast, ballWidth, ballHeight);
+}
+
+void resetBall() {
+    ballX = xSize/2-ballWidth/2;
+    ballY = ySize/2-ballHeight/2;
 }
 
 // Each frame
@@ -116,8 +123,7 @@ void frame() {
         p1Score = 0;
         p2Score = 0;
         fps = startFPS;
-        ballX = xSize/2;
-        ballY = ySize/2;
+        resetBall();
         ballXDir = 1;
         ballYDir = 1;
         resetTimer();
@@ -180,42 +186,40 @@ void frame() {
     BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 
     // Ball hitbox
-    if (ballX >= xSize-13) {
+    if (ballX >= xSize-(3+ballWidth)) {
         ballXDir = -1;
         p1Score++;
         fps = startFPS;
         printf("p1 score: %i\n", p1Score);
         ballClear();
-        ballY = ySize/2;
-        ballX = xSize/2;
+        resetBall();
         playSound(1.0);
         ThisThread::sleep_for(100ms);
         playSound(1.0);
-    } else if (ballX <= 13) {
+    } else if (ballX <= 3+ballWidth) {
         ballXDir = 1;
         p2Score++;
         fps = startFPS;
         printf("p2 score: %i\n", p2Score);
         ballClear();
-        ballY = ySize/2;
-        ballX = xSize/2;
+        resetBall();
         playSound(1.0);
         ThisThread::sleep_for(100ms);
         playSound(1.0);
     } else if (ballX >= p1X && ballX <= p1X+10) {
-        if (ballY >= p1Y && ballY <= p1Y+p1H+10) {
+        if (ballY >= p1Y && ballY <= p1Y+p1H) {
             ballXDir = 1;
             playSound(1.0);
         }
     } else if (ballX+10 >= p2X && ballX <= p2X) {
-        if (ballY+10 >= p2Y && ballY <= p2Y+p2H) {
+        if (ballY >= p2Y && ballY <= p2Y+p2H) {
             ballXDir = -1;
             playSound(1.0);
         }
     }
 
 
-    if (ballY >= ySize-13) {
+    if (ballY >= ySize-(3+ballHeight)) {
         ballYDir = -1;
         playSound(0.2);
     } else if (ballY <= 5) {
@@ -239,7 +243,7 @@ void frame() {
     // Player 2 draw
     BSP_LCD_FillRect(p2X, p2Y, 10, p2H);
     // Ball draw
-    BSP_LCD_FillRect(ballX, ballY, 10, 10);
+    BSP_LCD_FillRect(ballX, ballY, ballWidth, ballHeight);
     
     // Save position of ball to clear it next frame.
     ballXLast = ballX;
@@ -251,6 +255,7 @@ void frame() {
 // Visual menu
 void menu() {
     
+    // The 4 buttons in the menu
     rect button1 = rect(50,50,100,50,(uint8_t *)"Start");
     rect button2 = rect(50,100,100,50,(uint8_t *)"Speed");
     rect button3 = rect(50,150,100,50,(uint8_t *)"FPS");
@@ -259,8 +264,10 @@ void menu() {
     BSP_LCD_SetBackColor(LCD_COLOR_BLACK);
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
     
+    // Title
     BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Pong", CENTER_MODE);
 
+  // Prepare touch screen
   uint8_t status = BSP_TS_Init(xSize, ySize);
   if (status == TS_OK) {
     printf("[Touch input] Load Successfull!\n");
@@ -274,9 +281,8 @@ void menu() {
   int y = 0;
   bool sleepAtEnd = false;
   char txt[10];
-  while (showMenu) {
 
-    
+  while (showMenu) {
     BSP_TS_GetState(&TS_State);
     if (TS_State.touchDetected) {
       for (int idx = 0; idx < TS_State.touchDetected;
@@ -334,6 +340,7 @@ void menu() {
 // Start of program
 int main()
 {
+    // Initializa display
     BSP_LCD_Init();
     BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER, LCD_FB_START_ADDRESS);
     BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
@@ -341,24 +348,31 @@ int main()
     BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
     BSP_LCD_Clear(LCD_COLOR_BLACK);
     
-
+    // Get size of display
     xSize = BSP_LCD_GetXSize();
     ySize = BSP_LCD_GetYSize();
 
-    ballX = xSize/2;
-    ballY = ySize/2;
+    // Set ball position to center of the display
+    resetBall();
 
+    // Set player locations
     p1X = xSize/10;
     p2X = xSize/10*9;
 
+    // Show menu
     menu();
+
     BSP_LCD_Clear(LCD_COLOR_BLACK);
 
+    // Start timer
     t.start(&timer);
+    // Start pause button event
     pBtn.rise(&toggleRun);
 
+    // Set start fps
     fps = startFPS;
 
+    // Run game
     while (true) {
         if (run)
             frame();
