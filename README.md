@@ -13,7 +13,7 @@ There is also an option to turn on or off sound.<br/>
 Each player is controlled with a potentiometer for full analog controls.<br/>
 There is also 3 usable buttons, 2 of which is integrated on the board.<br/>
 The black button takes you back to the menu.<br/>
-The blue button pauses/unpauses the game. And the third button connected with a cable resets the score and ball position, it also clears any artifacts if the game has glithed. (Has not happened to me)<br/>
+The blue button pauses/unpauses the game. And the third button connected with a cable resets the score and ball position, it also clears any artifacts if the game has glithed. (Should not happen in the current version)<br/>
 
 
 <b>How I made it:</b><br/>
